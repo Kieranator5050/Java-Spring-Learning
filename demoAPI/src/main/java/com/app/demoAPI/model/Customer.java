@@ -1,16 +1,31 @@
 package com.app.demoAPI.model;
 
-public class CustomerModel {
+public class Customer {
+
     private String userID;
+
     private String fname;
+
     private String lname;
+
     private String address;
+
     private String parish;
+
     private int age;
+
     private String gender;
+
+
     private String maritalStatus;
+
+
     private String education;
+
+
     private String job;
+
+
     private String annualIncome;
 
     public String getUserID() {

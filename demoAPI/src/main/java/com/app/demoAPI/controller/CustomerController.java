@@ -1,6 +1,6 @@
 package com.app.demoAPI.controller;
 
-import com.app.demoAPI.model.CustomerModel;
+import com.app.demoAPI.model.Customer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,8 +17,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("customers")
 public class CustomerController {
-
-    Map<String, CustomerModel> customers;
+    private Map<String, Customer> customers;
 
     //DB Accessor Methods
     private boolean isCustomersInitialized() {
@@ -29,15 +28,15 @@ public class CustomerController {
         return customers.containsKey(uid);
     }
 
-    private ArrayList<CustomerModel>  getCustomersFromDB() {
+    private ArrayList<Customer>  getCustomersFromDB() {
         return new ArrayList<>(customers.values());
     }
 
-    private CustomerModel getCustomerByIDFromDB(String uid) {
+    private Customer getCustomerByIDFromDB(String uid) {
         return customers.get(uid);
     }
 
-    private void addCustomerToDB(String uid, CustomerModel customer) {
+    private void addCustomerToDB(String uid, Customer customer) {
         customers.put(uid, customer);
     }
 
@@ -52,10 +51,10 @@ public class CustomerController {
      */
     // Query Parameters
     @GetMapping
-    public ResponseEntity<ArrayList<CustomerModel>> getCustomers(@RequestParam(value = "page", defaultValue = "0") int page,
-                               @RequestParam(value = "limit", defaultValue = "50") int limit,//use default value to assign a value and make the parameter optional. Or use required = BOOLEAN
-                               @RequestParam(value = "sort", required = false) String sort) { //required = BOOLEAN does not work well with primitive types, can cause errors. Since primitive types cannot be converted to null. Recommend usage is with strings
-        ResponseEntity<ArrayList<CustomerModel>> response;
+    public ResponseEntity<ArrayList<Customer>> getCustomers(@RequestParam(value = "page", defaultValue = "0") int page,
+                                                            @RequestParam(value = "limit", defaultValue = "50") int limit,//use default value to assign a value and make the parameter optional. Or use required = BOOLEAN
+                                                            @RequestParam(value = "sort", required = false) String sort) { //required = BOOLEAN does not work well with primitive types, can cause errors. Since primitive types cannot be converted to null. Recommend usage is with strings
+        ResponseEntity<ArrayList<Customer>> response;
         if (isCustomersInitialized()) {
             response = new ResponseEntity<>(getCustomersFromDB(), HttpStatus.OK);
         } else {
@@ -70,8 +69,8 @@ public class CustomerController {
     // Route Parameters
     // Response Entity Usage
     @GetMapping(path = "/{userID}")
-    public ResponseEntity<CustomerModel> getCustomer(@PathVariable String userID) {
-        ResponseEntity<CustomerModel> response;
+    public ResponseEntity<Customer> getCustomer(@PathVariable String userID) {
+        ResponseEntity<Customer> response;
         if (isCustomersInitialized() && isCustomerInitialized(userID)) {
             response = new ResponseEntity<>(getCustomerByIDFromDB(userID), HttpStatus.OK);//Add generic to specify response body
         } else {
@@ -85,8 +84,8 @@ public class CustomerController {
      * Create Customer
      */
     @PostMapping
-    public ResponseEntity<CustomerModel> createCustomer(@RequestBody CustomerModel request) {
-        CustomerModel response = new CustomerModel();
+    public ResponseEntity<Customer> createCustomer(@RequestBody Customer request) {
+        Customer response = new Customer();
         response.setFname(request.getFname());
         response.setLname(request.getLname());
 
@@ -112,12 +111,12 @@ public class CustomerController {
      * Update Customer
      */
     @PutMapping(path = "/{userID}")
-    public ResponseEntity<CustomerModel> updateCustomer(@PathVariable String userID,
-                                                        @RequestBody CustomerModel request) {
-        ResponseEntity<CustomerModel> response;
+    public ResponseEntity<Customer> updateCustomer(@PathVariable String userID,
+                                                   @RequestBody Customer request) {
+        ResponseEntity<Customer> response;
         if (isCustomerInitialized(userID)) {
 
-            CustomerModel customer = getCustomerByIDFromDB(userID);
+            Customer customer = getCustomerByIDFromDB(userID);
             customer.setFname(request.getFname());
             customer.setLname(request.getLname());
             addCustomerToDB(userID, customer);
